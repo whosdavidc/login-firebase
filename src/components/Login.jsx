@@ -47,6 +47,12 @@ const Login = (props) => {
         try {
             const res = await auth.signInWithEmailAndPassword(email, password)
             console.log(res.user)
+            setEmail("") 
+            setPassword("")
+            setError(null)
+
+            props.history.push("/admin")
+
         } catch (error) {
             console.log(error)
             if (error.code === "auth/invalid-email") {
@@ -65,14 +71,18 @@ const Login = (props) => {
         try {
             const res = await auth.createUserWithEmailAndPassword(email, password)
             console.log(res.user)
-            setEmail("")
-            setPassword("")
-            setError(null)
             
             await db.collection("usuarios").doc(res.user.email).set({
                 email: res.user.email,
                 uid: res.user.uid
             })
+
+            setEmail("")
+            setPassword("")
+            setError(null)
+
+            props.history.push("/admin")
+
         } catch (error) {
             if(error.code === "auth/email-already-in-use"){
                 setError("El correo electrónico ya ha sido utilizado")

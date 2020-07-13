@@ -2,6 +2,7 @@ import React from 'react';
 import {BrowserRouter as Router, Switch, Route} from "react-router-dom"
 import Navbar from './components/Navbar';
 import Login from "./components/Login"
+import Admin from "./components/Admin"
 
 function App() {
   return (
@@ -19,7 +20,7 @@ function App() {
           </Route>
 
           <Route path="/admin">
-            admin...
+            <Admin/>
           </Route>
 
         </Switch>
