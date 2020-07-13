@@ -1,33 +1,14 @@
 import React from 'react'
 import {auth, db} from "../firebase"
+import { withRouter } from "react-router-dom"
 
 
-const Login = () => {
+const Login = (props) => {
 
     const [email, setEmail] = React.useState("")
     const [password, setPassword] = React.useState("")
     const [error, setError] = React.useState(null)
     const [esRegistro, setModo] = React.useState(true)
-
-    const registrar = React.useCallback(async() => {
-        try {
-            const res = await auth.createUserWithEmailAndPassword(email, password)
-            console.log(res.user)
-            await db.collection("usuarios").doc(res.user.email).set({
-                email: res.user.email,
-                uid: res.user.uid
-            })
-        } catch (error) {
-            if(error.code === "auth/email-already-in-use"){
-                setError("El correo electrónico ya ha sido utilizado")
-            }
-            if(error.code === "auth/invalid-email"){
-                setError("El correo electrónico no es válido")
-            }
-            console.log(error)
-        }
-
-    }, [email, password])  
 
 
 
@@ -51,11 +32,60 @@ const Login = () => {
 
         if(esRegistro){
             registrar()
+        }else{
+            login()
         }
+
         setEmail("")
         setPassword("")
-
+        setError(null)
     }
+
+
+
+    const login = React.useCallback(async() => {
+        try {
+            const res = await auth.signInWithEmailAndPassword(email, password)
+            console.log(res.user)
+        } catch (error) {
+            console.log(error)
+            if (error.code === "auth/invalid-email") {
+                setError("Email no valido.")
+            }
+            if (error.code === "auth/user-not-found") {
+                setError("Email no registrado.")
+            }
+            if (error.code === "auth/wrong-password") {
+                setError("Contraseña incorrecta.")
+            }
+        }
+    }, [email, password])
+
+    const registrar = React.useCallback(async() => {
+        try {
+            const res = await auth.createUserWithEmailAndPassword(email, password)
+            console.log(res.user)
+            setEmail("")
+            setPassword("")
+            setError(null)
+            
+            await db.collection("usuarios").doc(res.user.email).set({
+                email: res.user.email,
+                uid: res.user.uid
+            })
+        } catch (error) {
+            if(error.code === "auth/email-already-in-use"){
+                setError("El correo electrónico ya ha sido utilizado")
+            }
+            if(error.code === "auth/invalid-email"){
+                setError("El correo electrónico no es válido")
+            }
+            console.log(error)
+        }
+
+    }, [email, password, props.history])  
+
+
 
     return (
         <div className="mt-5">
@@ -92,7 +122,9 @@ const Login = () => {
                         value={password}
                     />
 
-                    <button className="btn btn-dark btn-block btn-lg" type="submit">Registrarse</button>
+                <button className="btn btn-dark btn-block btn-lg" type="submit">{
+                    esRegistro ? "Registrar" : "Acceder "
+                }</button>
 
                     <button
                         type="button"
@@ -109,4 +141,4 @@ const Login = () => {
     )
 }
 
-export default Login
+export default withRouter(Login)
