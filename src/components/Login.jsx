@@ -65,7 +65,7 @@ const Login = (props) => {
                 setError("Contraseña incorrecta.")
             }
         }
-    }, [email, password])
+    }, [email, password, props.history])
 
     const registrar = React.useCallback(async() => {
         try {
