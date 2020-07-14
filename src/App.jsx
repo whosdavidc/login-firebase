@@ -9,15 +9,17 @@ import {auth} from "./firebase"
 
 function App() {
 
-  const [firebaseUser, setFirebaseUser] = React.useState(false)
+  const [firebaseUser, setFirebaseUser] = React.useState(null)
 
   React.useEffect(() => {
     auth.onAuthStateChanged(user => {
       console.log(user)
       if(user){
         setFirebaseUser(user)
+        console.log("HAY UNO FACHA")
       }else{
         setFirebaseUser(null)
+        console.log("SE FUE EL FACHA")
       }
     })
   }, [])
@@ -27,7 +29,7 @@ function App() {
   return firebaseUser !== false ? (
     <Router>
       <div className="container">
-        <Navbar/>
+        <Navbar firebaseUser={firebaseUser}/>
         <Switch>
           
           <Route path="/" exact>
