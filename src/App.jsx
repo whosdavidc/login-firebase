@@ -4,8 +4,27 @@ import Navbar from './components/Navbar';
 import Login from "./components/Login"
 import Admin from "./components/Admin"
 
+import {auth} from "./firebase"
+
+
 function App() {
-  return (
+
+  const [firebaseUser, setFirebaseUser] = React.useState(false)
+
+  React.useEffect(() => {
+    auth.onAuthStateChanged(user => {
+      console.log(user)
+      if(user){
+        setFirebaseUser(user)
+      }else{
+        setFirebaseUser(null)
+      }
+    })
+  }, [])
+
+
+
+  return firebaseUser !== false ? (
     <Router>
       <div className="container">
         <Navbar/>
@@ -26,7 +45,9 @@ function App() {
         </Switch>
       </div>
     </Router>
-  );
+  ) : (
+    <p>Cargando...</p>
+  )
 }
 
 export default App;
