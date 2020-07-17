@@ -77,6 +77,10 @@ const Login = (props) => {
                 uid: res.user.uid
             })
 
+            await db.collection(res.user.uid).add({
+                name: "Tarea de ejercicio",
+                fecha: Date.now()
+            })
             setEmail("")
             setPassword("")
             setError(null)
